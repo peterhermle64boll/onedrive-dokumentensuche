@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#173b66">
+  <meta name="description" content="Persönliche Suche in Word-Dokumenten auf OneDrive">
+  <link rel="manifest" href="./manifest.json">
+  <link rel="icon" href="./icons/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="./icons/icon-192.png">
+  <link rel="stylesheet" href="./style.css">
+  <title>OneDrive-Dokumentensuche</title>
+  <script src="https://alcdn.msauth.net/browser/3.28.1/js/msal-browser.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.8.0/mammoth.browser.min.js"></script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand"><div class="brand-mark">OD</div><div><strong>OneDrive-Suche</strong><small>Dokumente schnell wiederfinden</small></div></div>
+    <div class="account-area">
+      <span id="accountLabel" class="muted">Nicht angemeldet</span>
+      <button id="loginBtn" class="primary">Mit Microsoft anmelden</button>
+      <button id="logoutBtn" class="secondary hidden">Abmelden</button>
+    </div>
+  </header>
+
+  <main class="shell">
+    <section id="setupNotice" class="notice">
+      <strong>Einrichtung erforderlich</strong>
+      <p>Trage zuerst deine Microsoft-Anwendungs-ID in <code>config.js</code> ein. Die Anleitung liegt in der ZIP-Datei.</p>
+    </section>
+
+    <section class="panel">
+      <div class="panel-head"><div><h1>Dokument auswählen</h1><p>Wähle eine Word-Datei in deinem persönlichen OneDrive.</p></div><button id="refreshBtn" class="secondary" disabled>Aktualisieren</button></div>
+      <div class="tabs">
+        <button class="tab active" data-tab="browse">OneDrive durchsuchen</button>
+        <button class="tab" data-tab="favorites">★ Favoriten</button>
+      </div>
+      <div id="browseView">
+        <div class="crumbs" id="breadcrumbs">OneDrive</div>
+        <div id="fileList" class="file-list"><div class="empty">Melde dich an, um deine Dateien zu laden.</div></div>
+      </div>
+      <div id="favoritesView" class="hidden">
+        <div id="favoriteList" class="file-list"><div class="empty">Noch keine Favoriten gespeichert.</div></div>
+        <p class="hint">Favoriten werden in deinem persönlichen OneDrive-App-Speicher abgelegt und sind nach der Anmeldung auf deinen Geräten verfügbar.</p>
+      </div>
+      <div id="selectedFile" class="selected-file hidden"></div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-head"><div><h2>Inhalt durchsuchen</h2><p>Die Suche läuft in der ausgewählten Datei, nicht im gesamten OneDrive.</p></div></div>
+      <label for="queryInput">Suchbegriffe</label>
+      <textarea id="queryInput" rows="2" placeholder="z. B. Datenschutz; Aufbewahrung; Löschfristen" disabled></textarea>
+      <div class="search-controls">
+        <div class="segmented" role="group" aria-label="Suchlogik">
+          <button id="andBtn" class="selected" disabled>UND – alle Begriffe</button>
+          <button id="orBtn" disabled>ODER – mindestens einer</button>
+        </div>
+        <button id="searchBtn" class="primary" disabled><span aria-hidden="true">⌕</span> Suchen</button>
+      </div>
+      <p class="hint">Mehrere Begriffe mit Komma, Semikolon oder Zeilenumbruch trennen. Groß-/Kleinschreibung wird ignoriert.</p>
+      <div id="status" class="status" aria-live="polite"></div>
+      <div id="results" class="results"></div>
+    </section>
+
+    <footer>Die Dokumentenanalyse erfolgt lokal in deinem Browser. Die ausgewählte Datei wird nicht an einen zusätzlichen Suchserver übertragen.</footer>
+  </main>
+  <script src="./config.js"></script>
+  <script src="./app.js"></script>
+</body>
+</html>
